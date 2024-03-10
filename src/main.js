@@ -15,7 +15,6 @@ const form = document.querySelector('.search-form');
 const container = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-btn');
 let searchWord = '';
-let currPage = 1;
 
 form.addEventListener('submit', onSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
@@ -38,22 +37,24 @@ function onSubmit(event) {
   loadMoreBtn.style.display = 'block';
 }
 
-function onLoadMore() {
-  if (!data.hits || data.hits.length === 0) {
-    loadMoreBtn.style.display = 'none';
-    showEndOfListMessage();
-    return;
-  }
-   else {
-    try {
-      fetchImages(searchWord).then(data => {
-        const marcup = renderMarcup(data);
-        container.insertAdjacentHTML('beforeend', marcup);
-        lightbox.refresh();
-        currPage += 1;
-      });
-    } catch (error) {
-      console.error('Error:', error);
+async function onLoadMore() {
+currPage += 1;
+  try {
+    const images = await fetchImages(searchWord, currPage);
+    renderMarcup(images);
+    lightbox.refresh();
+
+    const cardHeight = container.getBoundingClientRect().height;
+    window.scrollBy({
+      top: 4 * cardHeight,
+      behavior: 'smooth',
+    });
+
+    if (!images.hits || images.hits.length === 0) {
+      loadMoreBtn.style.display = 'none';
+      showEndOfListMessage();
     }
+  } catch (error) {
+    console.error('Error:', error);
   }
 }
