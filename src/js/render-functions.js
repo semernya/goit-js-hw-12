@@ -1,3 +1,6 @@
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+
 export function renderMarcup(data) {
   return data.hits
     .map(
@@ -27,4 +30,12 @@ export function renderMarcup(data) {
         </div>`
     )
     .join('');
+}
+
+export function showEndOfListMessage() {
+  iziToast.info({
+    timeout: 3000,
+    position: 'topRight',
+    message: "We're sorry, but you've reached the end of search results.",
+  });
 }

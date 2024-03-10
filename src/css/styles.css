@@ -51,7 +51,7 @@
 }
 
 .search-btn {
-    font-family: Montserrat;
+  font-family: Montserrat;
   width: 75px;
   height: 40px;
   display: inline-flex;
@@ -65,7 +65,8 @@
   border: none;
 }
 
-.search-btn:hover {
+.search-btn:hover,
+.load-btn:hover {
   background: #6C8CFF;
 }
 
@@ -115,7 +116,23 @@ line-height: 16px;
 letter-spacing: 0.48px;
 }
 
-/* spinner */
+.load-btn {
+font-family: Montserrat;
+  height: 40px;
+  display: none;
+  padding: 8px 16px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background: #4e75ff;
+  color: #ffffff;
+  border: none;
+  margin-left: calc((1158px - 110px) / 2);
+  margin-top: 16px;
+
+}
+
+/* loader */
 
 .loader {
   display: none;
