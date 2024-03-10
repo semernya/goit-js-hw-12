@@ -1,7 +1,14 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
-import { renderMarcup, showEndOfListMessage } from './js/render-functions';
+import {
+  renderMarcup,
+  showEndOfListMessage,
+  showEmptyInputMessage,
+  noImagesMessage,
+} from './js/render-functions';
 import { fetchImages } from './js/pixabay-api';
 
 const lightbox = new SimpleLightbox('.gallery a', {
@@ -13,6 +20,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
 
 const form = document.querySelector('.search-form');
 const container = document.querySelector('.gallery');
+const loader = document.querySelector('.loader');
 const loadMoreBtn = document.querySelector('.load-btn');
 let searchWord = '';
 let currPage;
@@ -25,39 +33,56 @@ async function onSubmit(event) {
   event.preventDefault();
   container.innerHTML = '';
   searchWord = form.elements.searchWord.value.trim();
+  loadMoreBtn.style.display = 'block';
+
+  if (searchWord === '') {
+    showEmptyInputMessage();
+    container.innerHTML = '';
+    loadMoreBtn.style.display = 'none';
+    form.reset();
+    return;
+  }
+  loader.style.display = 'block';
 
   try {
     const images = await fetchImages(searchWord, currPage).then(data => {
       const marcup = renderMarcup(data);
+      if (data.hits.length === 0) {
+        noImagesMessage();
+        loadMoreBtn.style.display = 'none';
+        loader.style.display = 'none';
+        return;
+      }
       container.insertAdjacentHTML('beforeend', marcup);
       lightbox.refresh();
+      loader.style.display = 'none';
     });
   } catch (error) {
     console.error('Error:', error);
   }
   form.reset();
-  loadMoreBtn.style.display = 'block';
 }
 
 async function onLoadMore() {
-currPage += 1;
+  currPage += 1;
   try {
     const images = await fetchImages(searchWord, currPage).then(data => {
       const marcup = renderMarcup(data);
       container.insertAdjacentHTML('beforeend', marcup);
       lightbox.refresh();
-    });
 
-    const cardHeight = container.getBoundingClientRect().height;
-    window.scrollBy({
-      top: 4 * cardHeight,
-      behavior: 'smooth',
-    });
+      const cardHeight = container.getBoundingClientRect().height;
+      window.scrollBy({
+        top: 4 * cardHeight,
+        behavior: 'smooth',
+      });
 
-    if (!images.hits || images.hits.length === 0) {
-      loadMoreBtn.style.display = 'none';
-      showEndOfListMessage();
-    }
+      if (data.hits.length <= 14) {
+        loadMoreBtn.style.display = 'none';
+        showEndOfListMessage();
+        lightbox.refresh();
+      }
+    });
   } catch (error) {
     console.error('Error:', error);
   }

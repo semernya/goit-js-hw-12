@@ -39,3 +39,20 @@ export function showEndOfListMessage() {
     message: "We're sorry, but you've reached the end of search results.",
   });
 }
+
+export function showEmptyInputMessage() {
+  iziToast.info({
+    timeout: 3000,
+    position: 'topRight',
+    message: "The search query can not be epty!",
+  });
+}
+
+export function noImagesMessage() {
+  iziToast.error({
+    timeout: 3000,
+    position: 'topRight',
+    message:
+      'There are no images matching your search query. Please, enter something else!',
+  });
+}
