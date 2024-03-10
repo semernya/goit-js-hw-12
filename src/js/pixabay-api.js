@@ -6,7 +6,7 @@ const KEY = '41952140-5e618661129c37e138516e154';
 const URL = 'https://pixabay.com/api/';
 const loader = document.querySelector('.loader');
 
-export async function fetchImages(searchWord, currPage = 1) {
+export async function fetchImages(searchWord, currPage) {
   loader.style.display = 'block';
   try {
     const resp = await axios.get(URL, {

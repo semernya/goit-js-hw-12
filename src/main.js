@@ -15,24 +15,26 @@ const form = document.querySelector('.search-form');
 const container = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-btn');
 let searchWord = '';
+let currPage;
 
 form.addEventListener('submit', onSubmit);
 loadMoreBtn.addEventListener('click', onLoadMore);
 
-function onSubmit(event) {
+async function onSubmit(event) {
+  currPage = 1;
   event.preventDefault();
   container.innerHTML = '';
   searchWord = form.elements.searchWord.value.trim();
-  fetchImages(searchWord)
-    .then(data => {
+
+  try {
+    const images = await fetchImages(searchWord, currPage).then(data => {
       const marcup = renderMarcup(data);
       container.insertAdjacentHTML('beforeend', marcup);
-
       lightbox.refresh();
-    })
-    .catch(error => {
-      console.error('Error:', error);
     });
+  } catch (error) {
+    console.error('Error:', error);
+  }
   form.reset();
   loadMoreBtn.style.display = 'block';
 }
@@ -40,9 +42,11 @@ function onSubmit(event) {
 async function onLoadMore() {
 currPage += 1;
   try {
-    const images = await fetchImages(searchWord, currPage);
-    renderMarcup(images);
-    lightbox.refresh();
+    const images = await fetchImages(searchWord, currPage).then(data => {
+      const marcup = renderMarcup(data);
+      container.insertAdjacentHTML('beforeend', marcup);
+      lightbox.refresh();
+    });
 
     const cardHeight = container.getBoundingClientRect().height;
     window.scrollBy({
