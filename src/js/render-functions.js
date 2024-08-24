@@ -44,7 +44,7 @@ export function showEmptyInputMessage() {
   iziToast.info({
     timeout: 3000,
     position: 'topRight',
-    message: "The search query can not be epty!",
+    message: "The search query can not be empty!",
   });
 }
 
